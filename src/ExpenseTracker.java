@@ -1,60 +1,35 @@
-import java.io.*;
 import java.util.*;
 
-class Expense {
-    private double amount;
-    private String category;
-    private String description;
-    private Date date;
-
-    public Expense(double amount, String category, String description, Date date) {
-        this.amount = amount;
-        this.category = category;
-        this.description = description;
-        this.date = date;
-    }
-
-    public String toCSV() {
-        return String.format("%.2f,%s,%s,%d", amount, category, description, date.getTime());
-    }
-
-    public static Expense fromCSV(String line) {
-        String[] parts = line.split(",");
-        double amount = Double.parseDouble(parts[0]);
-        String category = parts[1];
-        String description = parts[2];
-        Date date = new Date(Long.parseLong(parts[3]));
-        return new Expense(amount, category, description, date);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("$%.2f - %s (%s) on %s", amount, category, description, date.toString());
-    }
-}
-
 public class ExpenseTracker {
-    private static final String FILE_NAME = "expenses.csv";
-    private static List<Expense> expenses = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
+    private static ExpenseManager expenseManager = new ExpenseManager();
 
     public static void main(String[] args) {
-        loadExpenses();
-
         while (true) {
-            System.out.println("1. Add Expense\n2. View Expenses\n3. Exit");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            System.out.println("1. Add Expense\n2. View Expenses\n3. Filter by Category\n4. Filter by Date Range\n5. Edit Expense\n6. Delete Expense\n7. Exit");
+            int choice = InputValidator.getIntInput("Enter choice: ");
 
             switch (choice) {
                 case 1:
                     addExpense();
                     break;
                 case 2:
-                    viewExpenses();
+                    viewExpenses(expenseManager.getExpenses());
                     break;
                 case 3:
-                    saveExpenses();
+                    filterByCategory();
+                    break;
+                case 4:
+                    filterByDateRange();
+                    break;
+                case 5:
+                    editExpense();
+                    break;
+                case 6:
+                    deleteExpense();
+                    break;
+                case 7:
+                    expenseManager.saveExpenses();
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -64,51 +39,63 @@ public class ExpenseTracker {
     }
 
     private static void addExpense() {
-        System.out.print("Enter amount: ");
-        double amount = scanner.nextDouble();
-        scanner.nextLine();
-
-        System.out.print("Enter category: ");
-        String category = scanner.nextLine();
-
-        System.out.print("Enter description: ");
-        String description = scanner.nextLine();
-
+        double amount = InputValidator.getDoubleInput("Enter amount (must be positive): ");
+        String category = InputValidator.getStringInput("Enter category: ");
+        String description = InputValidator.getStringInput("Enter description: ");
         Expense expense = new Expense(amount, category, description, new Date());
-        expenses.add(expense);
+        expenseManager.addExpense(expense);
         System.out.println("Expense added successfully!");
     }
 
-    private static void viewExpenses() {
-        if (expenses.isEmpty()) {
+    private static void viewExpenses(List<Expense> expenseList) {
+        if (expenseList.isEmpty()) {
             System.out.println("No expenses recorded.");
             return;
         }
-        for (Expense expense : expenses) {
+        for (Expense expense : expenseList) {
             System.out.println(expense);
         }
     }
 
-    private static void saveExpenses() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
-            for (Expense expense : expenses) {
-                writer.println(expense.toCSV());
-            }
-        } catch (IOException e) {
-            System.out.println("Error saving expenses: " + e.getMessage());
-        }
+    private static void filterByCategory() {
+        String category = InputValidator.getStringInput("Enter category to filter by: ");
+        List<Expense> filtered = expenseManager.filterByCategory(category);
+        viewExpenses(filtered);
     }
 
-    private static void loadExpenses() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) return;
+    private static void filterByDateRange() {
+        Date startDate = InputValidator.getDateInput("Enter start date (yyyy-MM-dd): ");
+        Date endDate = InputValidator.getDateInput("Enter end date (yyyy-MM-dd): ");
+        List<Expense> filtered = expenseManager.filterByDateRange(startDate, endDate);
+        viewExpenses(filtered);
+    }
 
-        try (Scanner fileScanner = new Scanner(file)) {
-            while (fileScanner.hasNextLine()) {
-                expenses.add(Expense.fromCSV(fileScanner.nextLine()));
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading expenses: " + e.getMessage());
+    private static void editExpense() {
+        int index = InputValidator.getIntInput("Enter the index of the expense to edit (starting from 1): ") - 1;
+        if (index < 0 || index >= expenseManager.getExpenses().size()) {
+            System.out.println("Invalid index.");
+            return;
         }
+        Expense expense = expenseManager.getExpenses().get(index);
+        System.out.println("Editing expense: " + expense);
+        double amount = InputValidator.getDoubleInput("Enter new amount (leave blank to keep current): ");
+        String category = InputValidator.getStringInput("Enter new category (leave blank to keep current): ");
+        String description = InputValidator.getStringInput("Enter new description (leave blank to keep current): ");
+        Expense updatedExpense = new Expense(amount > 0 ? amount : expense.getAmount(),
+                !category.isEmpty() ? category : expense.getCategory(),
+                !description.isEmpty() ? description : expense.getDescription(),
+                expense.getDate());
+        expenseManager.editExpense(index, updatedExpense);
+        System.out.println("Expense edited successfully!");
+    }
+
+    private static void deleteExpense() {
+        int index = InputValidator.getIntInput("Enter the index of the expense to delete (starting from 1): ") - 1;
+        if (index < 0 || index >= expenseManager.getExpenses().size()) {
+            System.out.println("Invalid index.");
+            return;
+        }
+        expenseManager.deleteExpense(index);
+        System.out.println("Expense deleted successfully!");
     }
 }
