@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map;
 
 /**
  * The main class that runs the command-line expense tracker application.
@@ -12,10 +13,25 @@ public class ExpenseTracker {
         expenseManager.loadExpenses();
 
         while (true) {
-            System.out.println("1. Add Expense\n2. View Expenses\n3. Edit Expense\n4. Delete Expense\n5. Filter by Category\n6. Filter by Date Range\n7. Exit");
+            System.out.println("\n========== EXPENSE TRACKER ==========");
+            System.out.println("1. Add Expense");
+            System.out.println("2. View Expenses");
+            System.out.println("3. Edit Expense");
+            System.out.println("4. Delete Expense");
+            System.out.println("5. Filter by Category");
+            System.out.println("6. Filter by Date Range");
+            System.out.println("7. Expense Summary");
+            System.out.println("8. Exit");
+            System.out.println("=====================================");
             System.out.print("Enter choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice;
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             switch (choice) {
                 case 1:
@@ -37,6 +53,9 @@ public class ExpenseTracker {
                     filterByDateRange();
                     break;
                 case 7:
+                    displayExpenseSummary(expenseManager);
+                    break;
+                case 8:
                     expenseManager.saveExpenses();
                     System.out.println("Goodbye!");
                     return;
@@ -166,5 +185,45 @@ public class ExpenseTracker {
         } catch (Exception e) {
             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
         }
+    }
+
+    /**
+     * Displays a summary of recorded expenses.
+     *
+     * @param manager The expense manager containing the records.
+     */
+    private static void displayExpenseSummary(ExpenseManager manager) {
+        System.out.println("\n========== EXPENSE SUMMARY ==========");
+
+        System.out.println("Total Expenses: " + manager.getExpenses().size());
+
+        System.out.printf(
+                "Total Spending: $%.2f%n",
+                manager.getTotalSpending()
+        );
+
+        System.out.printf(
+                "Average Expense: $%.2f%n",
+                manager.getAverageExpense()
+        );
+
+        System.out.println("\nSpending by Category:");
+        System.out.println("-------------------------------------");
+
+        Map<String, Double> categoryTotals = manager.getSpendingByCategory();
+
+        if (categoryTotals.isEmpty()) {
+            System.out.println("No expenses recorded.");
+        } else {
+            for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+                System.out.printf(
+                        "%-20s $%.2f%n",
+                        entry.getKey(),
+                        entry.getValue()
+                );
+            }
+        }
+
+        System.out.println("=====================================");
     }
 }

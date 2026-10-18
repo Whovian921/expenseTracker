@@ -10,16 +10,32 @@ public class ExpenseManager {
 
     /**
      * Loads expenses from the CSV file into the application.
+     * Replaces the current expense list with the saved data.
      */
     public void loadExpenses() {
         File file = new File(FILE_NAME);
-        if (!file.exists()) return;
+
+        if (!file.exists()) {
+            return;
+        }
+
+        List<Expense> loadedExpenses = new ArrayList<>();
 
         try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
-                expenses.add(Expense.fromCSV(fileScanner.nextLine()));
+                String line = fileScanner.nextLine();
+
+                if (line.isBlank()) {
+                    continue;
+                }
+
+                loadedExpenses.add(Expense.fromCSV(line));
             }
-        } catch (IOException e) {
+
+            expenses.clear();
+            expenses.addAll(loadedExpenses);
+
+        } catch (IOException | IllegalArgumentException e) {
             System.out.println("Error loading expenses: " + e.getMessage());
         }
     }
@@ -52,7 +68,7 @@ public class ExpenseManager {
      * @return A list of expenses.
      */
     public List<Expense> getExpenses() {
-        return expenses;
+        return Collections.unmodifiableList(expenses);
     }
 
     /**
@@ -116,5 +132,53 @@ public class ExpenseManager {
         } else {
             System.out.println("Invalid expense index.");
         }
+    }
+
+    /**
+     * Calculates the total amount spent across all expenses.
+     *
+     * @return The total amount of all recorded expenses.
+     */
+    public double getTotalSpending() {
+        double total = 0.0;
+
+        for (Expense expense : expenses) {
+            total += expense.getAmount();
+        }
+
+        return total;
+    }
+
+    /**
+     * Calculates the average amount of recorded expenses.
+     *
+     * @return The average expense amount, or 0.0 if empty.
+     */
+    public double getAverageExpense() {
+        if (expenses.isEmpty()) {
+            return 0.0;
+        }
+
+        return getTotalSpending() / expenses.size();
+    }
+
+    /**
+     * Calculates total spending for each expense category.
+     *
+     * @return A map containing categories and their spending totals.
+     */
+    public Map<String, Double> getSpendingByCategory() {
+        Map<String, Double> categoryTotals = new TreeMap<>(
+                String.CASE_INSENSITIVE_ORDER
+        );
+
+        for (Expense expense : expenses) {
+            String category = expense.getCategory();
+            double amount = expense.getAmount();
+
+            categoryTotals.merge(category, amount, Double::sum);
+        }
+
+        return categoryTotals;
     }
 }
