@@ -1,81 +1,285 @@
+
+# Java Expense Tracker
+
 [![Java CI with Maven](https://github.com/Whovian921/expenseTracker/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/Whovian921/expenseTracker/actions/workflows/maven.yml)
 
-**Expense Tracker**
-A simple command-line application to track expenses. The program allows you to add, view, edit, delete, filter by category, and filter by date range. It supports saving expenses to a CSV file and loading them on startup.
+## Overview
 
-**Features**
-Add Expense: Allows users to add a new expense by entering the amount, category, and description.
-View Expenses: Displays all recorded expenses.
-Filter by Category: View expenses filtered by a specific category.
-Filter by Date Range: View expenses within a specific date range.
-Edit Expense: Modify an existing expense by updating its amount, category, or description.
-Delete Expense: Remove an expense from the list.
-Persistent Storage: Expenses are saved to a CSV file and loaded on program startup.
+Java Expense Tracker is a command-line application designed to help users record, organize, and analyze their personal expenses.
 
-**Requirements**
-Java 8 or later
-A text editor or IDE to run the program (e.g., IntelliJ IDEA, Eclipse, or VS Code)
+The application allows users to add, edit, and delete expenses, filter transactions by category or date, and generate spending summaries. It also provides monthly reports to help users better understand their spending habits.
 
-**Usage**
+Expense data is stored locally using CSV files, allowing transactions to persist between application sessions.
+
+The project is developed using Java and Maven, with automated unit testing through JUnit 5 and continuous integration using GitHub Actions.
+
+
+## Features
+
+### Expense Management
+- **Add Expenses:** Record expenses with an amount, category, description, and date.
+- **View Expenses:** Display all recorded transactions.
+- **Edit Expenses:** Update an existing expense's amount, category, or description.
+- **Delete Expenses:** Remove an existing expense.
+
+### Filtering and Reporting
+- **Category Filtering:** View expenses belonging to a specific category.
+- **Date Range Filtering:** View expenses within a specified date range.
+- **Spending Summary:** Calculate total spending, average expense amount, and spending totals by category.
+- **Monthly Reports:** Generate spending reports for a selected month and year.
+
+### Data Storage
+- **CSV Persistence:** Save and load expenses using a local CSV file.
+- **Input Validation:** Validate expense amounts, dates, and other user inputs.
+
+### Testing and Automation
+- **JUnit 5:** Automated tests covering core application functionality.
+- **Apache Maven:** Dependency management and automated builds.
+- **GitHub Actions:** Continuous integration that automatically builds and tests the project.
+
+## Technologies Used
+
+| Technology | Purpose |
+|------------|---------|
+| Java | Application development |
+| Maven | Build automation and dependency management |
+| JUnit 5 | Unit testing |
+| GitHub Actions | Continuous integration |
+| CSV | Local data storage |
+| Git | Version control |
+
+## Requirements
+
+Before running the application, ensure you have:
+
+- Java Development Kit (JDK) 17 or later
+- Apache Maven 3.9 or later
+- Git (optional, for cloning the repository)
+
+Verify your installations:
+
+```bash
+java -version
+mvn -version
+```
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Whovian921/expenseTracker.git
+cd expenseTracker
+```
+
+### 2. Compile the Application
+
+```bash
+mvn clean compile
+```
+
+### 3. Run the Application
+
+```bash
+java -cp target/classes main.java.ExpenseTracker
+```
+
+The application will launch in your terminal.
+
+## Usage
+
+The application provides an interactive menu:
+
+```text
+===== Expense Tracker =====
+
 1. Add Expense
-Enter the amount of the expense (e.g., 100.50).
-Enter the category of the expense (e.g., Food).
-Enter a description (e.g., Lunch at restaurant).
-
-2. View Expenses
-Lists all recorded expenses in the format: $amount - category (description) on date.
-
-3. Filter by Category
-Enter a category to view only the expenses belonging to that category (e.g., Food).
-
-4. Filter by Date Range
-Enter a start and end date to filter the expenses that fall within the specified date range (format: yyyy-MM-dd).
-
-5. Edit Expense
-Enter the index of the expense to edit.
-Modify any of the expense's fields (amount, category, description).
-
-6. Delete Expense
-Enter the index of the expense to delete from the list.
-
-7. Exit
-Save all expenses to the CSV file and exit the program.
-
-**Code Structure**
-Expense.java: The data model representing an individual expense. It includes fields for the amount, category, description, and date, and methods to convert expenses to/from CSV format.
-ExpenseManager.java: Manages all expenses. This class handles loading, saving, adding, editing, deleting, and filtering expenses.
-ExpenseTracker.java: The main application class that provides the command-line interface for interacting with the user. It communicates with ExpenseManager to perform the necessary operations.
-InputValidator.java: A utility class for validating user input (e.g., ensuring that amounts are positive, categories are non-empty, and dates are valid).
-
-**Example**
-1. Add Expense
 2. View Expenses
 3. Filter by Category
 4. Filter by Date Range
 5. Edit Expense
 6. Delete Expense
-7. Exit
+7. Expense Summary
+8. Monthly Report
+9. Exit
 
-Enter choice: 1
-Enter amount (must be positive): 100.50
+Enter your choice:
+```
+
+### Adding an Expense
+
+Select option `1` and enter the requested information.
+
+Example:
+
+```text
+Enter amount: 45.50
 Enter category: Food
-Enter description: Lunch at restaurant
+Enter description: Groceries
+
 Expense added successfully!
+```
 
-Enter choice: 2
-$100.50 - Food (Lunch at restaurant) on Mon Apr 01 12:00:00 GMT 2025
+### Viewing Expenses
 
-Enter choice: 7
-Goodbye!
+Select option `2` to display your recorded expenses.
 
-**How to Run**
-Clone the repository or download the project files.
-Open the project in your preferred IDE or text editor.
-Compile and run ExpenseTracker.java.
-Use the menu in the command-line interface to interact with the program.
+Example:
 
-**Saving and Loading**
-Expenses are saved to a CSV file named expenses.csv. On program startup, any previously saved expenses are loaded automatically.
+```text
+$45.50 - Food (Groceries)
+$30.00 - Transportation (Gas)
+$75.00 - Utilities (Internet)
+```
 
-**Author**
-Logan Barr
+### Filtering Expenses
+
+Use option `3` to filter expenses by category.
+
+Use option `4` to filter expenses within a date range.
+
+Dates are entered in the format:
+
+```text
+yyyy-MM-dd
+```
+
+### Editing and Deleting Expenses
+
+Use option `5` to modify an existing expense.
+
+Use option `6` to remove an expense.
+
+Follow the on-screen instructions to select the expense you want to modify or delete.
+
+### Expense Summary
+
+Select option `7` to view:
+
+- Total spending
+- Average expense amount
+- Spending totals by category
+
+### Monthly Reports
+
+Select option `8` and enter a month and year.
+
+The application generates a report containing:
+
+- Total spending for the selected month
+- Average expense amount
+- Spending totals grouped by category
+
+## Data Persistence
+
+Expense records are stored locally in a CSV file named `expenses.csv`.
+
+The application loads previously saved expenses when it starts and saves expense records when exiting.
+
+## Project Structure
+
+```text
+expenseTracker/
+├── .github/
+│   └── workflows/
+│       └── maven.yml
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       ├── Expense.java
+│   │       ├── ExpenseManager.java
+│   │       ├── ExpenseTracker.java
+│   │       └── InputValidator.java
+│   └── test/
+│       └── java/
+│           └── ExpenseManagerTest.java
+├── expenses.csv
+├── pom.xml
+└── README.md
+```
+
+### Main Classes
+
+**Expense.java**
+- Represents an individual expense.
+- Stores the amount, category, description, and date.
+- Provides methods for converting expenses to and from CSV format.
+
+**ExpenseManager.java**
+- Manages the collection of expenses.
+- Handles adding, editing, deleting, and filtering.
+- Calculates spending totals and averages.
+- Generates category-based and monthly spending data.
+- Handles CSV loading and saving.
+
+**ExpenseTracker.java**
+- Contains the application's entry point.
+- Provides the interactive command-line menu.
+- Connects user input to expense management functionality.
+
+**InputValidator.java**
+- Handles user input validation.
+- Helps prevent invalid amounts, dates, and other incorrect entries.
+
+## Testing
+
+The project uses JUnit 5 to verify application functionality.
+
+The automated test suite includes tests for:
+
+- Adding expenses
+- Editing expenses
+- Deleting expenses
+- Total spending calculations
+- Average spending calculations
+- Empty expense lists
+- Category filtering
+- Category spending totals
+- Monthly filtering
+- Invalid month handling
+
+Run the tests using:
+
+```bash
+mvn test
+```
+
+Run a clean build and execute all verification steps:
+
+```bash
+mvn clean verify
+```
+
+## Continuous Integration
+
+This project uses GitHub Actions to automatically compile and test the application.
+
+The workflow runs when changes are pushed to the `master` branch or when a pull request targets that branch.
+
+The workflow performs the following steps:
+
+1. Checks out the repository.
+2. Configures Java 17.
+3. Builds the project using Maven.
+4. Executes the JUnit test suite.
+5. Reports the build status.
+
+You can view the workflow results in the [GitHub Actions tab](https://github.com/Whovian921/expenseTracker/actions).
+
+## Future Improvements
+
+Potential future enhancements include:
+
+- Monthly budget limits and spending alerts
+- Additional reporting and spending analytics
+- Exporting financial summaries
+- Improved CSV error handling
+- More comprehensive automated testing
+- A graphical user interface
+- Improved monetary precision using BigDecimal
+
+## Author
+
+**Logan Barr**
+
+[GitHub Profile](https://github.com/Whovian921)
