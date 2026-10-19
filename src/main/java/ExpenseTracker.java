@@ -1,3 +1,5 @@
+package main.java;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map;
@@ -14,14 +16,15 @@ public class ExpenseTracker {
 
         while (true) {
             System.out.println("\n========== EXPENSE TRACKER ==========");
-            System.out.println("1. Add Expense");
+            System.out.println("1. Add main.java.Expense");
             System.out.println("2. View Expenses");
-            System.out.println("3. Edit Expense");
-            System.out.println("4. Delete Expense");
+            System.out.println("3. Edit main.java.Expense");
+            System.out.println("4. Delete main.java.Expense");
             System.out.println("5. Filter by Category");
             System.out.println("6. Filter by Date Range");
-            System.out.println("7. Expense Summary");
-            System.out.println("8. Exit");
+            System.out.println("7. main.java.Expense Summary");
+            System.out.println("8. Monthly Spending Report");
+            System.out.println("9. Exit");
             System.out.println("=====================================");
             System.out.print("Enter choice: ");
             int choice;
@@ -56,6 +59,9 @@ public class ExpenseTracker {
                     displayExpenseSummary(expenseManager);
                     break;
                 case 8:
+                    displayMonthlyReport();
+                    break;
+                case 9:
                     expenseManager.saveExpenses();
                     System.out.println("Goodbye!");
                     return;
@@ -81,7 +87,7 @@ public class ExpenseTracker {
 
         Expense expense = new Expense(amount, category, description, new Date());
         expenseManager.addExpense(expense);
-        System.out.println("Expense added successfully!");
+        System.out.println("main.java.Expense added successfully!");
     }
 
     /**
@@ -123,7 +129,7 @@ public class ExpenseTracker {
         String newDescription = scanner.nextLine();
 
         expenseManager.editExpense(index, newAmount, newCategory, newDescription);
-        System.out.println("Expense updated successfully!");
+        System.out.println("main.java.Expense updated successfully!");
     }
 
     /**
@@ -141,7 +147,7 @@ public class ExpenseTracker {
         }
 
         expenseManager.deleteExpense(index);
-        System.out.println("Expense deleted successfully!");
+        System.out.println("main.java.Expense deleted successfully!");
     }
 
     /**
@@ -203,7 +209,7 @@ public class ExpenseTracker {
         );
 
         System.out.printf(
-                "Average Expense: $%.2f%n",
+                "Average main.java.Expense: $%.2f%n",
                 manager.getAverageExpense()
         );
 
@@ -225,5 +231,75 @@ public class ExpenseTracker {
         }
 
         System.out.println("=====================================");
+    }
+
+    /**
+     * Displays spending statistics for a selected month and year.
+     */
+    private static void displayMonthlyReport() {
+        int month;
+        int year;
+
+        try {
+            System.out.print("Enter month (1-12): ");
+            month = Integer.parseInt(scanner.nextLine().trim());
+
+            System.out.print("Enter year (e.g., 2026): ");
+            year = Integer.parseInt(scanner.nextLine().trim());
+
+            if (month < 1 || month > 12 || year < 1) {
+                System.out.println("Invalid month or year.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter valid numbers.");
+            return;
+        }
+
+        List<Expense> monthlyExpenses =
+                expenseManager.filterByMonth(month, year);
+
+        if (monthlyExpenses.isEmpty()) {
+            System.out.println("No expenses found for this month.");
+            return;
+        }
+
+        double total = 0.0;
+        Map<String, Double> categoryTotals =
+                new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+        for (Expense expense : monthlyExpenses) {
+            total += expense.getAmount();
+
+            categoryTotals.merge(
+                    expense.getCategory(),
+                    expense.getAmount(),
+                    Double::sum
+            );
+        }
+
+        double average = total / monthlyExpenses.size();
+
+        String monthName = new java.text.DateFormatSymbols()
+                .getMonths()[month - 1];
+
+        System.out.println("\n========== MONTHLY EXPENSE REPORT ==========");
+        System.out.println("Month: " + monthName + " " + year);
+        System.out.println("Total Expenses: " + monthlyExpenses.size());
+        System.out.printf("Total Spending: $%.2f%n", total);
+        System.out.printf("Average main.java.Expense: $%.2f%n", average);
+
+        System.out.println("\nSpending by Category:");
+        System.out.println("--------------------------------------------");
+
+        for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+            System.out.printf(
+                    "%-20s $%.2f%n",
+                    entry.getKey(),
+                    entry.getValue()
+            );
+        }
+
+        System.out.println("============================================");
     }
 }

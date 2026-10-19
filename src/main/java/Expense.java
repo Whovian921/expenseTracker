@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.Date;
 
 /**
@@ -10,7 +12,7 @@ public class Expense {
     private Date date;
 
     /**
-     * Constructs a new Expense.
+     * Constructs a new main.java.Expense.
      *
      * @param amount     The monetary value of the expense.
      * @param category   The category of the expense (e.g., Food, Transportation).
@@ -70,10 +72,10 @@ public class Expense {
     }
 
     /**
-     * Creates an Expense object from a CSV-formatted string.
+     * Creates an main.java.Expense object from a CSV-formatted string.
      *
      * @param line A CSV-formatted string containing expense details.
-     * @return A new Expense object.
+     * @return A new main.java.Expense object.
      */
     public static Expense fromCSV(String line) {
         String[] parts = line.split(",");

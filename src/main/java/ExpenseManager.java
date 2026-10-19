@@ -1,3 +1,5 @@
+package main.java;
+
 import java.io.*;
 import java.util.*;
 
@@ -180,5 +182,36 @@ public class ExpenseManager {
         }
 
         return categoryTotals;
+    }
+
+    /**
+     * Retrieves all expenses recorded during a specific month and year.
+     *
+     * @param month The month (1-12).
+     * @param year  The year to filter by.
+     * @return A list of expenses from the selected month.
+     */
+    public List<Expense> filterByMonth(int month, int year) {
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException(
+                    "Month must be between 1 and 12."
+            );
+        }
+
+        List<Expense> filtered = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+
+        for (Expense expense : expenses) {
+            calendar.setTime(expense.getDate());
+
+            int expenseMonth = calendar.get(Calendar.MONTH) + 1;
+            int expenseYear = calendar.get(Calendar.YEAR);
+
+            if (expenseMonth == month && expenseYear == year) {
+                filtered.add(expense);
+            }
+        }
+
+        return filtered;
     }
 }
