@@ -1,3 +1,5 @@
+[![Java CI with Maven](https://github.com/Whovian921/expenseTracker/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/Whovian921/expenseTracker/actions/workflows/maven.yml)
+
 **Expense Tracker**
 A simple command-line application to track expenses. The program allows you to add, view, edit, delete, filter by category, and filter by date range. It supports saving expenses to a CSV file and loading them on startup.
 
